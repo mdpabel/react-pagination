@@ -13,7 +13,7 @@
 }
 ```
 
-## [usePagination](https://duckduckgo.com)
+## [usePagination](https://github.com/mdpabel/react-pagination/blob/main/src/hooks/usePegination/usePagination.js)
 
 ```js
 import { useMemo } from 'react';
