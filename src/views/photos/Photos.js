@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { useErrorHandler } from 'react-error-boundary';
 
 import { fetchPhotos } from '../../api/getPosts';
 import Card from '../../components/photo/photoCard';
@@ -21,7 +22,7 @@ const Posts = () => {
   const {
     data: posts,
     isLoading,
-    isError,
+    error,
   } = useQuery(
     ['photos', currentPage],
     () => fetchPhotos(currentPage, pageSize),
@@ -31,6 +32,8 @@ const Posts = () => {
       cacheTime: 20 * 60 * 1000,
     }
   );
+
+  useErrorHandler(error);
 
   useEffect(() => {
     const { queries } = queryClient.getQueryCache();
@@ -50,10 +53,6 @@ const Posts = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error</div>;
   }
 
   return (

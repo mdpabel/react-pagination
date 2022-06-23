@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+## React Pagination
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```json
+{
+"name":"Custom pagination",
+"section":"What are we using?",
+"packages": [
+    "react",
+    "react-query",
+    "react-error-boundary",
+    "axios"
+    ]'
+}
+```
 
-## Available Scripts
+## [usePagination](https://duckduckgo.com)
 
-In the project directory, you can run:
+```js
+import { useMemo } from 'react';
+import { getRange } from './helpers/getRange';
 
-### `npm start`
+// const DOTS = '';
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+const usePagination = ({
+  totalCount,
+  pageSize,
+  siblingCount = 1,
+  currentPage,
+}) => {
+  const paginationRange = useMemo(() => {
+    // case 1 : number of page we want to show is greater than the total number of page
+    if (totalPageNumbers > NumberOfPages) {
+      ...
+    }
+    // Left & right sibling indices
+    const leftSiblingIndex = currentPage - siblingCount;
+    const rightSiblingIndex = currentPage + siblingCount;
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    // Should show dots
+    const shouldShowLeftDots = leftSiblingIndex > 3;
+    const shouldShowRightDots = NumberOfPages - 2 > rightSiblingIndex;
 
-### `npm test`
+    // case 2 : No left dots to show, but rights dots to be shown
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+      ...
+    }
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    // case 3 : No right dots to show,
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+     ...
+    }
 
-### `npm run build`
+    // case 4: Both left & right dots to be shown
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      ...
+    }
+  }, [currentPage, pageSize, siblingCount, totalCount]);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  return paginationRange;
+};
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![output of pagination](/Screenshot_1.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Prefetch
 
-### `npm run eject`
+```js
+const queryKeys = new Set();
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+queries.map((key) => queryKeys.add(key.queryKey[1]));
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+paginationRange.map((page) => {
+  if (page === currentPage || page === 'DOTS' || queryKeys.has(page)) {
+    return null;
+  }
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  return queryClient.prefetchQuery(['photos', page], () =>
+    fetchPhotos(page, pageSize)
+  );
+});
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![prefetching the data](/Screenshot_2.png)
