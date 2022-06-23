@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getRange } from '../../helpers/getRange';
+import { getRange } from './helpers/getRange';
 
 // const DOTS = '';
 
