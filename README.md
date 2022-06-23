@@ -81,3 +81,9 @@ paginationRange.map((page) => {
 ```
 
 ![prefetching the data](/Screenshot_2.png)
+
+### resources :
+
+- https://github.com/mayankshubham/react-pagination/blob/master/src/usePagination.js
+- https://react-query.tanstack.com/
+- https://www.npmjs.com/package/react-error-boundary
